@@ -1,51 +1,50 @@
 #include "space.h"
 
-static void _create_asteroids(Space *space);
-static void _update(Space *space);
-static void _update_and_draw_asteroids(Space *space);
-static void _break_asteroid(Space *space, Asteroid *asteroid);
-static void _remove_asteroid(Space *space, Asteroid *asteroid);
-static void _inspect_asteroids_chain(Space *space);
-static void _update_and_draw_explosions(Space *space);
-static void _create_explosion(Space *space, Vector2D pos);
-static int _get_explosion_available_slot(Space *space);
-static float _random(float min, float max);
+static void _create_asteroids(Space *self);
+static void _update(Space *self);
+static void _update_and_draw_asteroids(Space *self);
+static void _break_asteroid(Space *self, Asteroid *asteroid);
+static void _remove_asteroid(Space *self, Asteroid *asteroid);
+static void _inspect_asteroids_chain(Space *self);
+static void _update_and_draw_explosions(Space *self);
+static void _create_explosion(Space *self, Vector2D pos);
+static int _get_explosion_available_slot(Space *self);
 
 Space *space_create()
 {
-    Space *space = (Space *)malloc(sizeof(Space));
-    space->timer = clock();
-    space->first_asteroid = NULL;
-    space->initial_asteroids_count = 4;
-    space->state = SpaceStateSpawning;
-    memset(space->explosions, 0, sizeof(Explosion *) * MAX_EXPLOSIONS);
-    return space;
+    Space *self = (Space *)malloc(sizeof(Space));
+    self->timer = clock();
+    self->first_asteroid = NULL;
+    self->initial_asteroids_count = 4;
+    self->state = SpaceStateSpawning;
+    memset(self->explosions, 0, sizeof(Explosion *) * MAX_EXPLOSIONS);
+    return self;
 }
 
-void space_update_and_draw(Space *space)
+void space_update_and_draw(Space *self)
 {
-    _update(space);
-    _update_and_draw_asteroids(space);
-    _update_and_draw_explosions(space);
+    _update(self);
+    _update_and_draw_asteroids(self);
+    _update_and_draw_explosions(self);
 }
 
-void space_hit_asteroid(Space *space, Asteroid *asteroid)
+void space_hit_asteroid(Space *self, Asteroid *asteroid)
 {
     printf("Hit %p (%.1f)\n", asteroid, asteroid->scale);
-    _inspect_asteroids_chain(space);
+    _inspect_asteroids_chain(self);
 
-    _create_explosion(space, asteroid->pos);
+    _create_explosion(self, asteroid->pos);
 
     (asteroid->scale == ASTEROID_SMALL)
-            ? _remove_asteroid(space, asteroid)
-            : _break_asteroid(space, asteroid);
+            ? _remove_asteroid(self, asteroid)
+            : _break_asteroid(self, asteroid);
 
-    _inspect_asteroids_chain(space);
+    _inspect_asteroids_chain(self);
 }
 
-void space_destroy(Space *space)
+void space_destroy(Space *self)
 {
-    Asteroid *current = space->first_asteroid;
+    Asteroid *current = self->first_asteroid;
     while (current != NULL)
     {
         Asteroid *next = current->next;
@@ -54,17 +53,17 @@ void space_destroy(Space *space)
     }
 }
 
-static void _create_asteroids(Space *space)
+static void _create_asteroids(Space *self)
 {
     Asteroid *first = NULL;
     Asteroid *last = NULL;
     srand(time(NULL));
 
-    for (int i = 0; i < space->initial_asteroids_count; i++)
+    for (int i = 0; i < self->initial_asteroids_count; i++)
     {
         Vector2D random_pos = {
-            _random((float)SCREEN_WIDTH * -1.0f, (float)SCREEN_WIDTH * 2.0f),
-            _random((float)SCREEN_HEIGHT * -1.0f, (float)SCREEN_HEIGHT * 2.0f)
+            random((float)SCREEN_WIDTH * -1.0f, (float)SCREEN_WIDTH * 2.0f),
+            random((float)SCREEN_HEIGHT * -1.0f, (float)SCREEN_HEIGHT * 2.0f)
         };
         Asteroid *n = asteroid_create(random_pos, ASTEROID_BIG);
         if (first == NULL)
@@ -80,30 +79,30 @@ static void _create_asteroids(Space *space)
         }
     }
 
-    space->first_asteroid = first;
+    self->first_asteroid = first;
 }
 
-void _update(Space *space)
+void _update(Space *self)
 {
-    if (space->first_asteroid == NULL && space->state == SpaceStateReady)
+    if (self->first_asteroid == NULL && self->state == SpaceStateReady)
     {
-        space->initial_asteroids_count++;
-        space->timer = clock();
-        space->state = SpaceStateSpawning;
+        self->initial_asteroids_count++;
+        self->timer = clock();
+        self->state = SpaceStateSpawning;
     }
-    else if (space->state == SpaceStateSpawning)
+    else if (self->state == SpaceStateSpawning)
     {
-        if (clock() - space->timer >= 100000)
+        if (clock() - self->timer >= 100000)
         {
-            _create_asteroids(space);
-            space->state = SpaceStateReady;
+            _create_asteroids(self);
+            self->state = SpaceStateReady;
         }
     }
 }
 
-static void _update_and_draw_asteroids(Space *space)
+static void _update_and_draw_asteroids(Space *self)
 {
-    Asteroid *current = space->first_asteroid;
+    Asteroid *current = self->first_asteroid;
     while (current != NULL)
     {
         asteroid_update_and_draw(current);
@@ -111,7 +110,7 @@ static void _update_and_draw_asteroids(Space *space)
     }
 }
 
-static void _break_asteroid(Space *space, Asteroid *asteroid)
+static void _break_asteroid(Space *self, Asteroid *asteroid)
 {
     if (asteroid->scale == ASTEROID_BIG)
         audio_play_once(SoundExplosionLarge);
@@ -141,10 +140,10 @@ static void _break_asteroid(Space *space, Asteroid *asteroid)
     }
 
     if (!prev)
-        space->first_asteroid = a1;
+        self->first_asteroid = a1;
 }
 
-static void _remove_asteroid(Space *space, Asteroid *asteroid)
+static void _remove_asteroid(Space *self, Asteroid *asteroid)
 {
     audio_play_once(SoundExplosionSmall);
     Asteroid *prev = asteroid->previous;
@@ -152,9 +151,9 @@ static void _remove_asteroid(Space *space, Asteroid *asteroid)
     asteroid_destroy(asteroid);
 
     if (!prev && !next)
-        space->first_asteroid = NULL;
+        self->first_asteroid = NULL;
     else if (!prev)
-        space->first_asteroid = next;
+        self->first_asteroid = next;
 
     if (prev)
         prev->next = next;
@@ -163,10 +162,10 @@ static void _remove_asteroid(Space *space, Asteroid *asteroid)
         next->previous = prev;
 }
 
-static void _inspect_asteroids_chain(Space *space)
+static void _inspect_asteroids_chain(Space *self)
 {
     int c = 0;
-    Asteroid *asteroid = space->first_asteroid;
+    Asteroid *asteroid = self->first_asteroid;
     while (asteroid != NULL)
     {
         c++;
@@ -179,45 +178,40 @@ static void _inspect_asteroids_chain(Space *space)
     }
 }
 
-static void _create_explosion(Space *space, Vector2D pos)
+static void _create_explosion(Space *self, Vector2D pos)
 {
-    int slot = _get_explosion_available_slot(space);
+    int slot = _get_explosion_available_slot(self);
     if (slot > -1)
-        space->explosions[slot] = explosion_create(pos);
+        self->explosions[slot] = explosion_create(pos);
 }
 
-static int _get_explosion_available_slot(Space *space)
+static int _get_explosion_available_slot(Space *self)
 {
     int availableSlot = -1;
     for (int i = 0; i < MAX_EXPLOSIONS && availableSlot == -1; i++)
     {
-        if (space->explosions[i] == NULL)
+        if (self->explosions[i] == NULL)
             availableSlot = i;
     }
     return availableSlot;
 }
 
-static void _update_and_draw_explosions(Space *space)
+static void _update_and_draw_explosions(Space *self)
 {
     for (int i = 0; i < MAX_EXPLOSIONS; i++)
     {
-        if (space->explosions[i] != NULL)
+        if (self->explosions[i] != NULL)
         {
-            if (space->explosions[i]->active)
+            if (self->explosions[i]->active)
             {
-                explosion_update_and_draw(space->explosions[i]);
+                explosion_update_and_draw(self->explosions[i]);
             }
             else
             {
-                explosion_destroy(space->explosions[i]);
-                space->explosions[i] = NULL;
+                explosion_destroy(self->explosions[i]);
+                self->explosions[i] = NULL;
             }
         }
     }
-}
-
-static float _random(float min, float max)
-{
-    return (((float)rand() / RAND_MAX) * (max - min + 1.0f) + min);
 }
 

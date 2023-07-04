@@ -2,7 +2,6 @@
 
 static void _draw(Asteroid *asteroid);
 static void _update(Asteroid *asteroid);
-static float _random(float min, float max);
 
 Asteroid *asteroid_create(Vector2D pos, float scale)
 {
@@ -10,10 +9,10 @@ Asteroid *asteroid_create(Vector2D pos, float scale)
 
     asteroid->pos.x = pos.x;
     asteroid->pos.y = pos.y;
-    asteroid->speed.x = _random(-ASTEROID_MAX_SPEED, ASTEROID_MAX_SPEED);
-    asteroid->speed.y = _random(-ASTEROID_MAX_SPEED, ASTEROID_MAX_SPEED);
-    asteroid->rotation = _random(0.0f, 360.0f);
-    asteroid->rotation_speed = _random(-ASTEROID_MAX_ROT_SPEED,
+    asteroid->speed.x = random(-ASTEROID_MAX_SPEED, ASTEROID_MAX_SPEED);
+    asteroid->speed.y = random(-ASTEROID_MAX_SPEED, ASTEROID_MAX_SPEED);
+    asteroid->rotation = random(0.0f, 360.0f);
+    asteroid->rotation_speed = random(-ASTEROID_MAX_ROT_SPEED,
                                         ASTEROID_MAX_ROT_SPEED);
     asteroid->scale = scale;
     asteroid->next = NULL;
@@ -89,10 +88,5 @@ static void _update(Asteroid *asteroid)
 
     asteroid->collider->pos.x = asteroid->pos.x;
     asteroid->collider->pos.y = asteroid->pos.y;
-}
-
-static float _random(float min, float max)
-{
-    return (((float)rand() / RAND_MAX) * (max - min + 1.0f) + min);
 }
 

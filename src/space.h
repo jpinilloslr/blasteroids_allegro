@@ -8,16 +8,16 @@
 
 #define MAX_EXPLOSIONS 5
 
-enum SpaceState
+typedef enum 
 {
     SpaceStateSpawning,
     SpaceStateReady
-};
+} SpaceState;
 
 typedef struct
 {
     clock_t timer;
-    enum SpaceState state;
+    SpaceState state;
     Asteroid *first_asteroid;
     Explosion* explosions[MAX_EXPLOSIONS];
     unsigned char initial_asteroids_count;

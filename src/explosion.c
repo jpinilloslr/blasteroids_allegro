@@ -2,7 +2,6 @@
 
 static void _update_particle(unsigned int timer, ExplosionParticle *particle);
 static void _draw_particle(ExplosionParticle *particle);
-static float _random(float min, float max);
 
 Explosion *explosion_create(Vector2D pos)
 {
@@ -14,7 +13,7 @@ Explosion *explosion_create(Vector2D pos)
     {
         explosion->particles[i].pos.x = pos.x;
         explosion->particles[i].pos.y = pos.y;
-        explosion->particles[i].speed = _random(0.5f, 1.0f);
+        explosion->particles[i].speed = random(0.5f, 1.0f);
         explosion->particles[i].direction =
             (360.0f / MAX_EXPLOSION_PARTICLES) * i;
     }
@@ -58,10 +57,5 @@ void _draw_particle(ExplosionParticle *particle)
     al_translate_transform(&transform, particle->pos.x, particle->pos.y);
     al_use_transform(&transform);
     al_draw_line(-1, 0, 1, 0, al_map_rgb(0, 255, 0), 1.0f);
-}
-
-static float _random(float min, float max)
-{
-    return (((float)rand() / RAND_MAX) * (max - min + 1.0f) + min);
 }
 

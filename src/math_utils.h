@@ -1,6 +1,7 @@
 #ifndef MATH_UTILS_H
 #define MATH_UTILS_H
 
+#include <stdlib.h>
 #include <math.h>
 
 #define M_PI 3.14159265358979323846
@@ -12,6 +13,7 @@ typedef struct
 } Vector2D;
 
 float vector2D_distance(Vector2D p1, Vector2D p2);
+float random(float min, float max);
 
 #endif
 

@@ -7,7 +7,7 @@
 #include "audio.h"
 #include "collider.h"
 
-#define BLAST_SPEED 9.0f
+#define BLAST_SPEED 16.0f
 
 enum BlastState
 {

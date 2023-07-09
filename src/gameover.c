@@ -7,6 +7,7 @@ static void _process_input();
 static void _draw();
 static void _draw_title();
 static void _draw_subtitle();
+static void _draw_score();
 
 void gameover_init()
 {
@@ -36,6 +37,7 @@ static void _draw()
 {
     _draw_title();
     _draw_subtitle();
+    _draw_score();
 }
 
 static void _draw_title()
@@ -69,6 +71,27 @@ static void _draw_subtitle()
     char *msg = input_joystick_available()
                     ? "Press START"
                     : "Press ENTER";
+
+    al_draw_text(font,
+                al_map_rgb(0, 255, 0),
+                0,
+                0,
+                0,
+                msg);
+}
+
+static void _draw_score()
+{
+    int score = game_state_get_param();
+
+    ALLEGRO_TRANSFORM transform;
+    al_identity_transform(&transform);
+    al_scale_transform(&transform, 3.0f, 3.0f);
+    al_translate_transform(&transform, 30.0f, 30.0f);
+    al_use_transform(&transform);
+
+    char msg[100];
+    sprintf(msg, "High score: %d", score);
 
     al_draw_text(font,
                 al_map_rgb(0, 255, 0),

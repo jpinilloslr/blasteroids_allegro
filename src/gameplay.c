@@ -56,6 +56,7 @@ static void _check_collisions()
     if (spaceship_impacted)
     {
         gameplay->lifes--;
+        game_state_set_param(gameplay->score);
 
         if (gameplay->lifes == 0)
             gameplay->delay_for_next_state = 60 * 2;

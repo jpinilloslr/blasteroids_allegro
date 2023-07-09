@@ -21,4 +21,7 @@ typedef struct
     NextGameState next_state;
 } GameState;
 
+void game_state_set_param(int param);
+int game_state_get_param();
+
 #endif

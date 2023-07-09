@@ -1,6 +1,7 @@
 #ifndef GAMEOVER_H
 #define GAMEOVER_H 
 
+#include <stdio.h>
 #include "input.h"
 #include "allegro.h"
 #include "screen.h"

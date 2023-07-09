@@ -68,7 +68,9 @@ static void _draw(Asteroid *asteroid)
 
 static void _update(Asteroid *asteroid)
 {
-    int margin = asteroid->state == AsteroidNormal ? 30 : 60;
+    int margin = asteroid->state == AsteroidNormal
+                     ? (50.0f * asteroid->scale) / 3.0f
+                     : 60;
 
     if (asteroid->pos.x > 0 && asteroid->pos.x < SCREEN_WIDTH &&
         asteroid->pos.y > 0 && asteroid->pos.y < SCREEN_HEIGHT)
@@ -96,4 +98,3 @@ static void _update(Asteroid *asteroid)
     asteroid->collider->pos.x = asteroid->pos.x;
     asteroid->collider->pos.y = asteroid->pos.y;
 }
-

@@ -11,6 +11,7 @@ typedef struct
 {
     int score;
     int lifes;
+    int delay_for_next_state;
     Space *space;
     Spaceship *spaceship;
 } Gameplay;

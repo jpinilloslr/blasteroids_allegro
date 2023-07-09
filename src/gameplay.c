@@ -12,6 +12,7 @@ void gameplay_init()
     gameplay = (Gameplay *)malloc(sizeof(Gameplay));
     gameplay->lifes = 3;
     gameplay->score = 0;
+    gameplay->delay_for_next_state = 0;
     
     gameplay->space = space_create();
     gameplay->spaceship = spaceship_create();
@@ -25,10 +26,13 @@ NextGameState gameplay_process_frame()
     space_update_and_draw(gameplay->space);
     spaceship_update_and_draw(gameplay->spaceship);
     hud_draw(gameplay->score, gameplay->lifes);
-    
-    return (gameplay->lifes > 0)
-        ? NextGameStateNone
-        : NextGameStateOver;
+   
+    if (gameplay->delay_for_next_state > 0)
+        gameplay->delay_for_next_state--;
+
+    return (gameplay->lifes == 0 && gameplay->delay_for_next_state == 0)
+        ? NextGameStateOver
+        : NextGameStateNone;
 }
 
 void gameplay_destroy()
@@ -50,8 +54,14 @@ static void _check_collisions()
                             &impacted_asteroids);
 
     if (spaceship_impacted)
+    {
         gameplay->lifes--;
 
+        if (gameplay->lifes == 0)
+            gameplay->delay_for_next_state = 60 * 2;
+    }
+
+    
     gameplay->score += impacted_asteroids * 100;
 }
 

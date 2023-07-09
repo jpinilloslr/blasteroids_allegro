@@ -9,6 +9,7 @@ static void _inspect_asteroids_chain(Space *self);
 static void _update_and_draw_explosions(Space *self);
 static void _create_explosion(Space *self, Vector2D pos);
 static int _get_explosion_available_slot(Space *self);
+static void _get_out_of_screen_random_pos(Vector2D *pos);
 
 Space *space_create()
 {
@@ -61,10 +62,8 @@ static void _create_asteroids(Space *self)
 
     for (int i = 0; i < self->initial_asteroids_count; i++)
     {
-        Vector2D random_pos = {
-            random((float)SCREEN_WIDTH * -1.0f, (float)SCREEN_WIDTH * 2.0f),
-            random((float)SCREEN_HEIGHT * -1.0f, (float)SCREEN_HEIGHT * 2.0f)
-        };
+        Vector2D random_pos;
+        _get_out_of_screen_random_pos(&random_pos);
         Asteroid *n = asteroid_create(random_pos, ASTEROID_BIG);
         if (first == NULL)
         {
@@ -215,3 +214,15 @@ static void _update_and_draw_explosions(Space *self)
     }
 }
 
+static void _get_out_of_screen_random_pos(Vector2D *pos)
+{
+    do
+    {
+        pos->x = random((float)SCREEN_WIDTH * -2.0f, (float)SCREEN_WIDTH * 2.0f);
+    } while (pos->x > 0 && pos->x < SCREEN_WIDTH);
+    
+    do
+    {
+        pos->y = random((float)SCREEN_HEIGHT * -2.0f, (float)SCREEN_HEIGHT * 2.0f);
+    } while (pos->y > 0 && pos->y < SCREEN_HEIGHT);
+}

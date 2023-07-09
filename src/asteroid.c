@@ -15,6 +15,7 @@ Asteroid *asteroid_create(Vector2D pos, float scale)
     asteroid->rotation_speed = random(-ASTEROID_MAX_ROT_SPEED,
                                         ASTEROID_MAX_ROT_SPEED);
     asteroid->scale = scale;
+    asteroid->state = AsteroidSpawning;
     asteroid->next = NULL;
     asteroid->previous = NULL;
 
@@ -67,19 +68,25 @@ static void _draw(Asteroid *asteroid)
 
 static void _update(Asteroid *asteroid)
 {
+    int margin = asteroid->state == AsteroidNormal ? 30 : 60;
+
+    if (asteroid->pos.x > 0 && asteroid->pos.x < SCREEN_WIDTH &&
+        asteroid->pos.y > 0 && asteroid->pos.y < SCREEN_HEIGHT)
+        asteroid->state = AsteroidNormal;
+
     asteroid->pos.x += (asteroid->speed.x);
     asteroid->pos.y -= (asteroid->speed.y);
     asteroid->rotation += (asteroid->rotation_speed);
 
-    if (asteroid->pos.x < 0)
-        asteroid->pos.x = SCREEN_WIDTH;
-    else if (asteroid->pos.x > SCREEN_WIDTH)
-        asteroid->pos.x = 0;
+    if (asteroid->pos.x < 0 - margin)
+        asteroid->pos.x = SCREEN_WIDTH + margin;
+    else if (asteroid->pos.x > SCREEN_WIDTH + margin)
+        asteroid->pos.x = 0 - margin;
 
-    if (asteroid->pos.y < 0)
-        asteroid->pos.y = SCREEN_HEIGHT;
-    else if (asteroid->pos.y > SCREEN_HEIGHT)
-        asteroid->pos.y = 0;
+    if (asteroid->pos.y < 0 - margin)
+        asteroid->pos.y = SCREEN_HEIGHT + margin;
+    else if (asteroid->pos.y > SCREEN_HEIGHT + margin)
+        asteroid->pos.y = 0 - margin;
 
     if (asteroid->rotation <= -360.0f)
         asteroid->rotation = 0.0f;

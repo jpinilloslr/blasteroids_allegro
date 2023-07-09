@@ -12,6 +12,12 @@
 #define ASTEROID_MEDIUM 1.0f
 #define ASTEROID_SMALL 0.5f
 
+typedef enum
+{
+    AsteroidSpawning,
+    AsteroidNormal
+} AsteroidState;
+
 typedef struct
 {
     Vector2D pos;
@@ -22,6 +28,7 @@ typedef struct
     void *next;
     void *previous;
     Collider *collider;
+    AsteroidState state;
 } Asteroid;
 
 Asteroid *asteroid_create(Vector2D pos, float scale);

@@ -53,6 +53,8 @@ static void _check_collisions()
                             &spaceship_impacted,
                             &impacted_asteroids);
 
+    gameplay->score += impacted_asteroids * 100;
+    
     if (spaceship_impacted)
     {
         gameplay->lifes--;
@@ -61,9 +63,6 @@ static void _check_collisions()
         if (gameplay->lifes == 0)
             gameplay->delay_for_next_state = 60 * 2;
     }
-
-    
-    gameplay->score += impacted_asteroids * 100;
 }
 
 static void _process_input()
